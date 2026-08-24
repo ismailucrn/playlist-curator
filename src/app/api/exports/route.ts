@@ -12,7 +12,9 @@ export async function POST(request: Request) {
     const exportResult =
       user.mode === "demo"
         ? await createDemoExport({ userId: user.id, ...input })
-        : await (await import("@/spotify/export-service")).exportSpotifyPlaylist({
+        : await (
+            await import("@/spotify/export-service")
+          ).exportSpotifyPlaylist({
             userId: user.id,
             ...input,
           });

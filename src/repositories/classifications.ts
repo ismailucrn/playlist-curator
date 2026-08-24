@@ -1,6 +1,10 @@
 import "server-only";
 
-import type { ClassificationSuggestion, PlaylistSummary, Track } from "@/domain/models";
+import type {
+  ClassificationSuggestion,
+  PlaylistSummary,
+  Track,
+} from "@/domain/models";
 import { db } from "@/lib/db";
 import { AppError } from "@/lib/errors";
 
@@ -53,7 +57,8 @@ export async function getClassificationRun(userId: string, runId: string) {
       },
     },
   });
-  if (!run) throw new AppError("NOT_FOUND", "Sınıflandırma çalışması bulunamadı.");
+  if (!run)
+    throw new AppError("NOT_FOUND", "Sınıflandırma çalışması bulunamadı.");
   return run;
 }
 
@@ -70,11 +75,17 @@ export async function saveFeedback(
     where: { id: { in: resultIds }, run: { userId } },
   });
   if (results.length !== new Set(resultIds).size) {
-    throw new AppError("NOT_FOUND", "Sonuçlardan biri bulunamadı veya size ait değil.");
+    throw new AppError(
+      "NOT_FOUND",
+      "Sonuçlardan biri bulunamadı veya size ait değil.",
+    );
   }
 
   await db.$transaction(async (tx) => {
-    await tx.classificationResult.updateMany({ where: { id: { in: resultIds } }, data: { status } });
+    await tx.classificationResult.updateMany({
+      where: { id: { in: resultIds } },
+      data: { status },
+    });
     await tx.feedbackEvent.createMany({
       data: results.map((result) => ({
         userId,
@@ -93,7 +104,10 @@ export async function saveFeedback(
               categoryId: result.categoryId,
             },
           },
-          update: { confidence: Math.max(0.9, result.score), source: "accepted-feedback" },
+          update: {
+            confidence: Math.max(0.9, result.score),
+            source: "accepted-feedback",
+          },
           create: {
             userId,
             trackId: result.trackId,
@@ -103,7 +117,11 @@ export async function saveFeedback(
         });
       } else {
         await tx.trackTag.deleteMany({
-          where: { userId, trackId: result.trackId, categoryId: result.categoryId },
+          where: {
+            userId,
+            trackId: result.trackId,
+            categoryId: result.categoryId,
+          },
         });
       }
     }

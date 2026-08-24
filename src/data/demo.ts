@@ -31,8 +31,20 @@ export const demoPlaylists: PlaylistSummary[] = [
 
 const allDemoTracks: Record<string, Track[]> = {
   "demo-gece-yolculugu": [
-    track("demo-01", "Geceye Bir Şarkı", ["Lal Rüzgâr"], "Kıyı Çizgisi", 221000),
-    track("demo-02", "Midnight Avenue", ["The Satellites"], "Neon Lines", 198000),
+    track(
+      "demo-01",
+      "Geceye Bir Şarkı",
+      ["Lal Rüzgâr"],
+      "Kıyı Çizgisi",
+      221000,
+    ),
+    track(
+      "demo-02",
+      "Midnight Avenue",
+      ["The Satellites"],
+      "Neon Lines",
+      198000,
+    ),
     track("demo-03", "Luna Tranquila", ["Mar Azul"], "Después del Sol", 244000),
     track("demo-04", "Yavaşça", ["Ada"], "İç Sesler", 207000),
     track("demo-05", "Glass Skyline", ["Northbound"], "City Static", 234000),
@@ -52,7 +64,13 @@ const allDemoTracks: Record<string, Track[]> = {
   ],
 };
 
-function track(id: string, name: string, artists: string[], album: string, durationMs: number): Track {
+function track(
+  id: string,
+  name: string,
+  artists: string[],
+  album: string,
+  durationMs: number,
+): Track {
   return {
     id,
     uri: `spotify:track:${id}`,

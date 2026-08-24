@@ -8,7 +8,11 @@ export async function POST(request: Request) {
     assertTrustedOrigin(request);
     await deleteCurrentSession();
     const response = NextResponse.redirect(new URL("/", request.url), 303);
-    response.cookies.set(SESSION_COOKIE, "", { httpOnly: true, maxAge: 0, path: "/" });
+    response.cookies.set(SESSION_COOKIE, "", {
+      httpOnly: true,
+      maxAge: 0,
+      path: "/",
+    });
     return response;
   } catch (error) {
     return errorResponse(error);

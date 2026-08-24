@@ -10,9 +10,13 @@ export async function getValidAccessToken(
   options: { forceRefresh?: boolean; fetcher?: typeof fetch } = {},
 ) {
   const account = await db.spotifyAccount.findUnique({ where: { userId } });
-  if (!account) throw new AppError("UNAUTHORIZED", "Spotify hesabı bağlı değil.");
+  if (!account)
+    throw new AppError("UNAUTHORIZED", "Spotify hesabı bağlı değil.");
 
-  if (!options.forceRefresh && account.accessTokenExpiresAt.getTime() > Date.now() + 60_000) {
+  if (
+    !options.forceRefresh &&
+    account.accessTokenExpiresAt.getTime() > Date.now() + 60_000
+  ) {
     return decryptToken(account.encryptedAccessToken);
   }
 

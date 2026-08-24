@@ -13,16 +13,19 @@ export async function spotifyFetch<T>(
 ): Promise<T> {
   const fetcher = options.fetcher ?? fetch;
   const accessToken = await getValidAccessToken(userId, { fetcher });
-  const response = await fetcher(path.startsWith("http") ? path : `${API_BASE}${path}`, {
-    ...init,
-    headers: {
-      Accept: "application/json",
-      ...(init.body ? { "Content-Type": "application/json" } : {}),
-      ...init.headers,
-      Authorization: `Bearer ${accessToken}`,
+  const response = await fetcher(
+    path.startsWith("http") ? path : `${API_BASE}${path}`,
+    {
+      ...init,
+      headers: {
+        Accept: "application/json",
+        ...(init.body ? { "Content-Type": "application/json" } : {}),
+        ...init.headers,
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: "no-store",
     },
-    cache: "no-store",
-  });
+  );
 
   if (response.status === 401 && !options.retry) {
     await getValidAccessToken(userId, { forceRefresh: true, fetcher });

@@ -10,7 +10,10 @@ export async function POST(request: Request) {
     assertTrustedOrigin(request);
     const user = await requireCurrentUser();
     const input = classificationRequestSchema.parse(await readJson(request));
-    const { playlist, tracks } = await getPlaylistForUser(user, input.playlistId);
+    const { playlist, tracks } = await getPlaylistForUser(
+      user,
+      input.playlistId,
+    );
     const run = await runClassification({
       userId: user.id,
       providerId: user.activeProvider,
@@ -18,7 +21,10 @@ export async function POST(request: Request) {
       tracks,
       categoryIds: input.categoryIds,
     });
-    return Response.json({ runId: run.id, redirectTo: `/results/${run.id}` }, { status: 201 });
+    return Response.json(
+      { runId: run.id, redirectTo: `/results/${run.id}` },
+      { status: 201 },
+    );
   } catch (error) {
     return errorResponse(error);
   }

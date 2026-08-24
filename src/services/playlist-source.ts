@@ -22,7 +22,8 @@ export async function getPlaylistForUser(
 ): Promise<PlaylistSourceResult> {
   if (user.mode === "demo") {
     const playlist = getDemoPlaylist(playlistId);
-    if (!playlist) throw new AppError("NOT_FOUND", "Demo çalma listesi bulunamadı.");
+    if (!playlist)
+      throw new AppError("NOT_FOUND", "Demo çalma listesi bulunamadı.");
     return { playlist, tracks: getDemoTracks(playlistId) };
   }
 

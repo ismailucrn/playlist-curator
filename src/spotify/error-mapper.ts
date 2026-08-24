@@ -11,9 +11,13 @@ export async function mapSpotifyError(response: Response) {
 
   if (response.status === 429) {
     const retryAfter = Number(response.headers.get("retry-after") ?? "1");
-    return new AppError("RATE_LIMITED", "Spotify istek sınırına ulaşıldı. Biraz sonra tekrar deneyin.", {
-      retryAfter: Number.isFinite(retryAfter) ? retryAfter : 1,
-    });
+    return new AppError(
+      "RATE_LIMITED",
+      "Spotify istek sınırına ulaşıldı. Biraz sonra tekrar deneyin.",
+      {
+        retryAfter: Number.isFinite(retryAfter) ? retryAfter : 1,
+      },
+    );
   }
   if (response.status === 403) {
     return new AppError(
@@ -23,13 +27,21 @@ export async function mapSpotifyError(response: Response) {
     );
   }
   if (response.status === 401) {
-    return new AppError("UNAUTHORIZED", "Spotify oturumu geçersiz. Yeniden bağlanın.");
+    return new AppError(
+      "UNAUTHORIZED",
+      "Spotify oturumu geçersiz. Yeniden bağlanın.",
+    );
   }
-  if (response.status === 404) return new AppError("NOT_FOUND", "Spotify kaynağı bulunamadı.");
-  return new AppError("SPOTIFY_ERROR", "Spotify şu anda isteği tamamlayamadı.", {
-    status: response.status,
-    spotifyMessage,
-  });
+  if (response.status === 404)
+    return new AppError("NOT_FOUND", "Spotify kaynağı bulunamadı.");
+  return new AppError(
+    "SPOTIFY_ERROR",
+    "Spotify şu anda isteği tamamlayamadı.",
+    {
+      status: response.status,
+      spotifyMessage,
+    },
+  );
 }
 
 async function safeJson(response: Response): Promise<unknown> {

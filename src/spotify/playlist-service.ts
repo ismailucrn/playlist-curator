@@ -20,14 +20,18 @@ export async function listSpotifyPlaylists(userId: string) {
   let pageCount = 0;
 
   while (next && pageCount < 2_000) {
-    const page = playlistPageSchema.parse(await spotifyFetch<unknown>(userId, next));
+    const page = playlistPageSchema.parse(
+      await spotifyFetch<unknown>(userId, next),
+    );
     playlists.push(...page.items);
     next = page.next;
     pageCount += 1;
   }
 
   return playlists
-    .filter((playlist) => playlist.owner.id === profile.id || playlist.collaborative)
+    .filter(
+      (playlist) => playlist.owner.id === profile.id || playlist.collaborative,
+    )
     .map(mapSpotifyPlaylist);
 }
 
@@ -41,7 +45,9 @@ export async function getSpotifyPlaylist(userId: string, playlistId: string) {
   let pageCount = 0;
 
   while (next && pageCount < 2_000) {
-    const page = playlistItemsPageSchema.parse(await spotifyFetch<unknown>(userId, next));
+    const page = playlistItemsPageSchema.parse(
+      await spotifyFetch<unknown>(userId, next),
+    );
     for (const entry of page.items) {
       const mapped = mapSpotifyPlaylistItem(entry.item);
       if (mapped) tracks.push(mapped);

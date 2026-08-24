@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { CATEGORY_TYPES, CLASSIFICATION_STATUSES, PROVIDER_IDS } from "@/domain/models";
+import {
+  CATEGORY_TYPES,
+  CLASSIFICATION_STATUSES,
+  PROVIDER_IDS,
+} from "@/domain/models";
 import { slugify } from "@/lib/utils";
 
 export const scoreSchema = z.number().finite().min(0).max(1);

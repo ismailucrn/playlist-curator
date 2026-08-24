@@ -1,6 +1,10 @@
 import "server-only";
 
-import type { CategoryModel, CategoryRuleInput, CategoryType } from "@/domain/models";
+import type {
+  CategoryModel,
+  CategoryRuleInput,
+  CategoryType,
+} from "@/domain/models";
 import { categoryInputSchema } from "@/domain/validation";
 import { db } from "@/lib/db";
 
@@ -37,7 +41,9 @@ export async function createCategory(userId: string, input: unknown) {
       type: category.type,
       description: category.description,
       rules: { create: category.rules },
-      seedTracks: { create: category.seedTrackIds.map((trackId) => ({ trackId })) },
+      seedTracks: {
+        create: category.seedTrackIds.map((trackId) => ({ trackId })),
+      },
     },
     include: { rules: true, seedTracks: true },
   });

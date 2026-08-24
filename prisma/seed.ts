@@ -119,7 +119,10 @@ async function main() {
 main()
   .then(() => prisma.$disconnect())
   .catch(async (error) => {
-    console.error("Demo seed failed:", error instanceof Error ? error.message : error);
+    console.error(
+      "Demo seed failed:",
+      error instanceof Error ? error.message : error,
+    );
     await prisma.$disconnect();
     process.exit(1);
   });

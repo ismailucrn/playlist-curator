@@ -1,6 +1,9 @@
 import { DemoClassificationProvider } from "@/classification/demo-provider";
 import { RuleBasedClassificationProvider } from "@/classification/rule-based-provider";
-import type { ClassificationProvider, ClassificationProviderId } from "@/domain/models";
+import type {
+  ClassificationProvider,
+  ClassificationProviderId,
+} from "@/domain/models";
 
 const providers: Record<ClassificationProviderId, ClassificationProvider> = {
   demo: new DemoClassificationProvider(),

@@ -9,18 +9,26 @@ describe("Spotify response mappers", () => {
       uri: "spotify:track:abc123",
       name: "Test Track",
       artists: [{ name: "Artist One" }, { name: "Artist Two" }],
-      album: { name: "Album", images: [{ url: "https://i.scdn.co/image/test" }] },
+      album: {
+        name: "Album",
+        images: [{ url: "https://i.scdn.co/image/test" }],
+      },
       duration_ms: 123000,
       external_urls: { spotify: "https://open.spotify.com/track/abc123" },
       is_playable: true,
       is_local: false,
     });
-    expect(mapped).toMatchObject({ id: "abc123", artists: ["Artist One", "Artist Two"] });
+    expect(mapped).toMatchObject({
+      id: "abc123",
+      artists: ["Artist One", "Artist Two"],
+    });
   });
 
   it("null, episode, local ve kimliksiz öğeleri güvenle atlar", () => {
     expect(mapSpotifyPlaylistItem(null)).toBeNull();
-    expect(mapSpotifyPlaylistItem({ type: "episode", id: "episode" })).toBeNull();
+    expect(
+      mapSpotifyPlaylistItem({ type: "episode", id: "episode" }),
+    ).toBeNull();
     expect(
       mapSpotifyPlaylistItem({
         type: "track",

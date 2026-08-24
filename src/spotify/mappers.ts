@@ -1,19 +1,17 @@
 import type { PlaylistSummary, Track } from "@/domain/models";
 import { spotifyTrackSchema } from "@/spotify/schemas";
 
-export function mapSpotifyPlaylist(
-  playlist: {
-    id: string;
-    name: string;
-    description?: string | null;
-    images: { url: string }[];
-    items: { total: number };
-    owner: { display_name?: string | null };
-    collaborative: boolean;
-    snapshot_id?: string | null;
-    external_urls?: { spotify?: string };
-  },
-): PlaylistSummary {
+export function mapSpotifyPlaylist(playlist: {
+  id: string;
+  name: string;
+  description?: string | null;
+  images: { url: string }[];
+  items: { total: number };
+  owner: { display_name?: string | null };
+  collaborative: boolean;
+  snapshot_id?: string | null;
+  external_urls?: { spotify?: string };
+}): PlaylistSummary {
   return {
     id: playlist.id,
     name: playlist.name,

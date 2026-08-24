@@ -3,12 +3,17 @@ import { categoryInputSchema, scoreSchema } from "@/domain/validation";
 
 describe("category validation", () => {
   it("Türkçe kategori adını güvenli slug'a dönüştürür", () => {
-    const result = categoryInputSchema.parse({ name: "Gece Sürüşü", type: "mood" });
+    const result = categoryInputSchema.parse({
+      name: "Gece Sürüşü",
+      type: "mood",
+    });
     expect(result.slug).toBe("gece-surusu");
   });
 
   it("bilinmeyen kategori türünü reddeder", () => {
-    expect(() => categoryInputSchema.parse({ name: "Test", type: "tempo" })).toThrow();
+    expect(() =>
+      categoryInputSchema.parse({ name: "Test", type: "tempo" }),
+    ).toThrow();
   });
 });
 

@@ -14,18 +14,37 @@ export async function exportSpotifyPlaylist(input: {
   clientRequestId: string;
 }) {
   const results = await db.classificationResult.findMany({
-    where: { id: { in: input.resultIds }, run: { id: input.runId, userId: input.userId } },
+    where: {
+      id: { in: input.resultIds },
+      run: { id: input.runId, userId: input.userId },
+    },
   });
   if (results.length !== new Set(input.resultIds).size) {
-    throw new AppError("NOT_FOUND", "Dışa aktarılacak sonuçlardan biri bulunamadı.");
+    throw new AppError(
+      "NOT_FOUND",
+      "Dışa aktarılacak sonuçlardan biri bulunamadı.",
+    );
   }
 
   const byId = new Map(results.map((result) => [result.id, result]));
-  const uris = [...new Set(input.resultIds.map((id) => byId.get(id)?.trackUri).filter(isTrackUri))];
-  if (uris.length === 0) throw new AppError("VALIDATION_ERROR", "Geçerli Spotify parçası seçilmedi.");
+  const uris = [
+    ...new Set(
+      input.resultIds.map((id) => byId.get(id)?.trackUri).filter(isTrackUri),
+    ),
+  ];
+  if (uris.length === 0)
+    throw new AppError(
+      "VALIDATION_ERROR",
+      "Geçerli Spotify parçası seçilmedi.",
+    );
 
   let exportRecord = await db.playlistExport.findUnique({
-    where: { userId_clientRequestId: { userId: input.userId, clientRequestId: input.clientRequestId } },
+    where: {
+      userId_clientRequestId: {
+        userId: input.userId,
+        clientRequestId: input.clientRequestId,
+      },
+    },
   });
   if (exportRecord?.status === "completed") return exportRecord;
   if (!exportRecord) {
@@ -58,16 +77,24 @@ export async function exportSpotifyPlaylist(input: {
       spotifyUrl = playlist.external_urls.spotify ?? null;
       exportRecord = await db.playlistExport.update({
         where: { id: exportRecord.id },
-        data: { spotifyPlaylistId: playlistId, spotifyUrl, status: "adding-items" },
+        data: {
+          spotifyPlaylistId: playlistId,
+          spotifyUrl,
+          status: "adding-items",
+        },
       });
     }
 
     const remainingUris = uris.slice(exportRecord.nextOffset);
     for (const chunk of chunkSpotifyUris(remainingUris)) {
-      await spotifyFetch(input.userId, `/playlists/${encodeURIComponent(playlistId)}/items`, {
-        method: "POST",
-        body: JSON.stringify({ uris: chunk }),
-      });
+      await spotifyFetch(
+        input.userId,
+        `/playlists/${encodeURIComponent(playlistId)}/items`,
+        {
+          method: "POST",
+          body: JSON.stringify({ uris: chunk }),
+        },
+      );
       exportRecord = await db.playlistExport.update({
         where: { id: exportRecord.id },
         data: {
@@ -88,7 +115,10 @@ export async function exportSpotifyPlaylist(input: {
       where: { id: exportRecord.id },
       data: {
         status: "partial",
-        errorMessage: error instanceof Error ? error.message.slice(0, 300) : "Bilinmeyen hata",
+        errorMessage:
+          error instanceof Error
+            ? error.message.slice(0, 300)
+            : "Bilinmeyen hata",
       },
     });
     throw error;

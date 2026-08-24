@@ -17,7 +17,10 @@ export async function requestRefreshedToken(
   });
   const body = await safeJson(response);
   if (!response.ok) {
-    const reason = typeof body === "object" && body ? (body as { error?: string }).error : undefined;
+    const reason =
+      typeof body === "object" && body
+        ? (body as { error?: string }).error
+        : undefined;
     throw new AppError(
       reason === "invalid_grant" ? "UNAUTHORIZED" : "SPOTIFY_ERROR",
       reason === "invalid_grant"

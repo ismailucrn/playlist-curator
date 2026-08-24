@@ -1,6 +1,5 @@
 import type {
   CategoryModel,
-  ClassificationContext,
   ClassificationProvider,
   ClassificationSuggestion,
   Track,
@@ -23,7 +22,6 @@ export class DemoClassificationProvider implements ClassificationProvider {
   async classifyTrack(
     track: Track,
     categories: CategoryModel[],
-    _context?: ClassificationContext,
   ): Promise<ClassificationSuggestion[]> {
     return categories.map((category) => {
       const normalized = stableHash(`${track.id}:${category.id}`) / 0xffffffff;
@@ -42,13 +40,9 @@ export class DemoClassificationProvider implements ClassificationProvider {
     });
   }
 
-  async classifyTracks(
-    tracks: Track[],
-    categories: CategoryModel[],
-    context?: ClassificationContext,
-  ) {
+  async classifyTracks(tracks: Track[], categories: CategoryModel[]) {
     const results = await Promise.all(
-      tracks.map((track) => this.classifyTrack(track, categories, context)),
+      tracks.map((track) => this.classifyTrack(track, categories)),
     );
     return results.flat();
   }

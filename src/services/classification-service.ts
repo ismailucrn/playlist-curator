@@ -1,11 +1,18 @@
 import "server-only";
 
 import { getClassificationProvider } from "@/classification/registry";
-import type { ClassificationProviderId, PlaylistSummary, Track } from "@/domain/models";
+import type {
+  ClassificationProviderId,
+  PlaylistSummary,
+  Track,
+} from "@/domain/models";
 import { providerIdSchema, scoreSchema } from "@/domain/validation";
 import { AppError } from "@/lib/errors";
 import { listCategories } from "@/repositories/categories";
-import { getAcceptedTags, saveClassificationRun } from "@/repositories/classifications";
+import {
+  getAcceptedTags,
+  saveClassificationRun,
+} from "@/repositories/classifications";
 
 export async function runClassification(input: {
   userId: string;
@@ -14,7 +21,9 @@ export async function runClassification(input: {
   tracks: Track[];
   categoryIds: string[];
 }) {
-  const providerId = providerIdSchema.parse(input.providerId) as ClassificationProviderId;
+  const providerId = providerIdSchema.parse(
+    input.providerId,
+  ) as ClassificationProviderId;
   const categories = (await listCategories(input.userId)).filter((category) =>
     input.categoryIds.includes(category.id),
   );
@@ -22,7 +31,10 @@ export async function runClassification(input: {
     throw new AppError("NOT_FOUND", "Seçilen kategorilerden biri bulunamadı.");
   }
   if (input.tracks.length === 0) {
-    throw new AppError("VALIDATION_ERROR", "Sınıflandırılabilecek şarkı bulunamadı.");
+    throw new AppError(
+      "VALIDATION_ERROR",
+      "Sınıflandırılabilecek şarkı bulunamadı.",
+    );
   }
 
   const tags = await getAcceptedTags(

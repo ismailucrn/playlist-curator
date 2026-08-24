@@ -4,7 +4,9 @@ const optionalUrl = z.union([z.literal(""), z.url()]);
 
 const envSchema = z
   .object({
-    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development"),
     DATABASE_URL: z.string().min(1).default("file:./dev.db"),
     APP_URL: z.url().default("http://127.0.0.1:3000"),
     DEMO_MODE: z

@@ -39,9 +39,16 @@ export class AppError extends Error {
 export function normalizeError(error: unknown) {
   if (error instanceof AppError) return error;
   if (error instanceof ZodError) {
-    return new AppError("VALIDATION_ERROR", "Gönderilen bilgiler geçerli değil.", {
-      issues: error.issues.map(({ path, message }) => ({ path: path.join("."), message })),
-    });
+    return new AppError(
+      "VALIDATION_ERROR",
+      "Gönderilen bilgiler geçerli değil.",
+      {
+        issues: error.issues.map(({ path, message }) => ({
+          path: path.join("."),
+          message,
+        })),
+      },
+    );
   }
   return new AppError("INTERNAL_ERROR", "Beklenmeyen bir hata oluştu.");
 }

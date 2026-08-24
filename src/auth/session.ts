@@ -16,7 +16,9 @@ function hashToken(token: string) {
 export async function createSession(userId: string) {
   const token = randomBytes(32).toString("base64url");
   const expiresAt = new Date(Date.now() + SESSION_AGE_SECONDS * 1000);
-  await db.session.create({ data: { tokenHash: hashToken(token), userId, expiresAt } });
+  await db.session.create({
+    data: { tokenHash: hashToken(token), userId, expiresAt },
+  });
   return { token, expiresAt };
 }
 
@@ -45,11 +47,13 @@ export async function getCurrentUser() {
 
 export async function requireCurrentUser() {
   const user = await getCurrentUser();
-  if (!user) throw new AppError("UNAUTHORIZED", "Devam etmek için oturum açmalısınız.");
+  if (!user)
+    throw new AppError("UNAUTHORIZED", "Devam etmek için oturum açmalısınız.");
   return user;
 }
 
 export async function deleteCurrentSession() {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  if (token) await db.session.deleteMany({ where: { tokenHash: hashToken(token) } });
+  if (token)
+    await db.session.deleteMany({ where: { tokenHash: hashToken(token) } });
 }

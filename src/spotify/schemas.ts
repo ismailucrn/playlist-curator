@@ -1,8 +1,14 @@
 import { z } from "zod";
 
-const imageSchema = z.object({ url: z.string(), height: z.number().nullable().optional(), width: z.number().nullable().optional() });
+const imageSchema = z.object({
+  url: z.string(),
+  height: z.number().nullable().optional(),
+  width: z.number().nullable().optional(),
+});
 const externalUrlsSchema = z.object({ spotify: z.string().optional() }).loose();
-const ownerSchema = z.object({ id: z.string(), display_name: z.string().nullable().optional() }).loose();
+const ownerSchema = z
+  .object({ id: z.string(), display_name: z.string().nullable().optional() })
+  .loose();
 
 export const spotifyProfileSchema = z
   .object({

@@ -1,7 +1,11 @@
 export const CATEGORY_TYPES = ["language", "genre", "mood", "custom"] as const;
 export type CategoryType = (typeof CATEGORY_TYPES)[number];
 
-export const CLASSIFICATION_STATUSES = ["suggested", "accepted", "rejected"] as const;
+export const CLASSIFICATION_STATUSES = [
+  "suggested",
+  "accepted",
+  "rejected",
+] as const;
 export type ClassificationStatus = (typeof CLASSIFICATION_STATUSES)[number];
 
 export const PROVIDER_IDS = ["demo", "rule-based"] as const;

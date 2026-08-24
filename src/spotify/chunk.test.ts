@@ -9,7 +9,12 @@ describe("Spotify playlist item chunking", () => {
     [101, [100, 1]],
     [250, [100, 100, 50]],
   ])("%i öğeyi 100'lük gruplara böler", (count, expected) => {
-    const uris = Array.from({ length: count }, (_, index) => `spotify:track:${index}`);
-    expect(chunkSpotifyUris(uris).map((chunk) => chunk.length)).toEqual(expected);
+    const uris = Array.from(
+      { length: count },
+      (_, index) => `spotify:track:${index}`,
+    );
+    expect(chunkSpotifyUris(uris).map((chunk) => chunk.length)).toEqual(
+      expected,
+    );
   });
 });

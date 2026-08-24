@@ -27,14 +27,20 @@ describe("Spotify token refresh", () => {
         expires_in: 3600,
       }),
     );
-    expect((await requestRefreshedToken("refresh", fetcher)).refresh_token).toBeUndefined();
+    expect(
+      (await requestRefreshedToken("refresh", fetcher)).refresh_token,
+    ).toBeUndefined();
   });
 
   it("invalid_grant için yeniden yetkilendirme hatası üretir", async () => {
     const fetcher = vi
       .fn<typeof fetch>()
-      .mockResolvedValue(Response.json({ error: "invalid_grant" }, { status: 400 }));
-    await expect(requestRefreshedToken("expired", fetcher)).rejects.toMatchObject({
+      .mockResolvedValue(
+        Response.json({ error: "invalid_grant" }, { status: 400 }),
+      );
+    await expect(
+      requestRefreshedToken("expired", fetcher),
+    ).rejects.toMatchObject({
       code: "UNAUTHORIZED",
       details: { reauthorize: true },
     });

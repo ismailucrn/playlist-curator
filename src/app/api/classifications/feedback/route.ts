@@ -10,7 +10,10 @@ export async function PATCH(request: Request) {
     const user = await requireCurrentUser();
     const input = feedbackRequestSchema.parse(await readJson(request));
     await saveFeedback(user.id, input.resultIds, input.status);
-    return Response.json({ updated: input.resultIds.length, status: input.status });
+    return Response.json({
+      updated: input.resultIds.length,
+      status: input.status,
+    });
   } catch (error) {
     return errorResponse(error);
   }

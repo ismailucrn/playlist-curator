@@ -12,6 +12,8 @@ export const SPOTIFY_SCOPES = [
   "playlist-modify-private",
 ] as const;
 
+export const SPOTIFY_OAUTH_COOKIE = "spotify_oauth_attempt";
+
 export function createPkceAttempt() {
   const verifier = randomBytes(64).toString("base64url");
   const challenge = createHash("sha256").update(verifier).digest("base64url");
@@ -23,7 +25,9 @@ export function createPkceAttempt() {
   };
 }
 
-export function buildSpotifyAuthorizeUrl(attempt: ReturnType<typeof createPkceAttempt>) {
+export function buildSpotifyAuthorizeUrl(
+  attempt: ReturnType<typeof createPkceAttempt>,
+) {
   const url = new URL("https://accounts.spotify.com/authorize");
   url.search = new URLSearchParams({
     response_type: "code",
@@ -55,9 +59,16 @@ export async function exchangeAuthorizationCode(
   });
   const body = await safeJson(response);
   if (!response.ok) {
-    throw new AppError("UNAUTHORIZED", "Spotify yetkilendirmesi tamamlanamadı.", {
-      reason: typeof body === "object" && body ? (body as { error?: string }).error : undefined,
-    });
+    throw new AppError(
+      "UNAUTHORIZED",
+      "Spotify yetkilendirmesi tamamlanamadı.",
+      {
+        reason:
+          typeof body === "object" && body
+            ? (body as { error?: string }).error
+            : undefined,
+      },
+    );
   }
   return tokenResponseSchema.parse(body);
 }
