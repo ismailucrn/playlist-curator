@@ -1,0 +1,181 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id                    String                 @id @default(cuid())
+  mode                  String                 @default("demo")
+  displayName           String
+  activeProvider        String                 @default("demo")
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  spotifyAccount        SpotifyAccount?
+  sessions              Session[]
+  categories            Category[]
+  classificationRuns    ClassificationRun[]
+  feedbackEvents        FeedbackEvent[]
+  trackTags             TrackTag[]
+  playlistExports       PlaylistExport[]
+}
+
+model SpotifyAccount {
+  id                    String    @id @default(cuid())
+  userId                String    @unique
+  spotifyAccountId      String    @unique
+  spotifyUserId         String?
+  encryptedAccessToken  String
+  encryptedRefreshToken String
+  accessTokenExpiresAt  DateTime
+  authorizedAt          DateTime  @default(now())
+  scopes                String
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Category {
+  id          String              @id @default(cuid())
+  userId      String
+  name        String
+  slug        String
+  type        String
+  description String              @default("")
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rules       CategoryRule[]
+  seedTracks  CategorySeedTrack[]
+  results     ClassificationResult[]
+  trackTags   TrackTag[]
+
+  @@unique([userId, slug])
+  @@index([userId, type])
+}
+
+model CategoryRule {
+  id         String   @id @default(cuid())
+  categoryId String
+  field      String
+  operator   String
+  value      String
+  weight     Float    @default(0.7)
+  createdAt  DateTime @default(now())
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+}
+
+model CategorySeedTrack {
+  id         String   @id @default(cuid())
+  categoryId String
+  trackId    String
+  createdAt  DateTime @default(now())
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, trackId])
+}
+
+model ClassificationRun {
+  id                       String                 @id @default(cuid())
+  userId                   String
+  sourcePlaylistId         String
+  sourcePlaylistName       String
+  sourcePlaylistSnapshotId String?
+  provider                 String
+  createdAt                DateTime               @default(now())
+  user                     User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  results                  ClassificationResult[]
+
+  @@index([userId, createdAt])
+}
+
+model ClassificationResult {
+  id           String            @id @default(cuid())
+  runId        String
+  trackId      String
+  trackUri     String
+  trackName    String
+  artistNames  String
+  albumName    String
+  categoryId   String
+  score        Float
+  evidenceJson String
+  source       String
+  status       String            @default("suggested")
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  run          ClassificationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  category     Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  feedback     FeedbackEvent[]
+
+  @@unique([runId, trackId, categoryId])
+  @@index([runId, status])
+}
+
+model FeedbackEvent {
+  id                     String               @id @default(cuid())
+  userId                 String
+  classificationResultId String
+  status                 String
+  createdAt              DateTime             @default(now())
+  user                   User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classificationResult   ClassificationResult @relation(fields: [classificationResultId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model TrackTag {
+  id         String   @id @default(cuid())
+  userId     String
+  trackId    String
+  categoryId String
+  confidence Float    @default(1)
+  source     String   @default("accepted-feedback")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackId, categoryId])
+  @@index([userId, trackId])
+}
+
+model PlaylistExport {
+  id                String   @id @default(cuid())
+  userId            String
+  runId             String
+  clientRequestId   String
+  playlistName      String
+  spotifyPlaylistId String?
+  spotifyUrl        String?
+  selectedCount     Int
+  addedCount        Int      @default(0)
+  nextOffset        Int      @default(0)
+  status            String   @default("pending")
+  errorMessage      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientRequestId])
+  @@index([userId, createdAt])
+}
