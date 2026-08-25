@@ -1,16 +1,25 @@
 import "server-only";
 
 import { mapSpotifyError } from "@/spotify/error-mapper";
+import {
+  assertSpotifyRequestAllowed,
+  type SpotifyRequestMethod,
+} from "@/spotify/request-policy";
 import { getValidAccessToken } from "@/spotify/token-service";
 
 const API_BASE = "https://api.spotify.com/v1";
 
+type SpotifyRequestInit = Omit<RequestInit, "method"> & {
+  method?: SpotifyRequestMethod;
+};
+
 export async function spotifyFetch<T>(
   userId: string,
   path: string,
-  init: RequestInit = {},
+  init: SpotifyRequestInit = {},
   options: { fetcher?: typeof fetch; retry?: number } = {},
 ): Promise<T> {
+  assertSpotifyRequestAllowed(path, init.method);
   const fetcher = options.fetcher ?? fetch;
   const accessToken = await getValidAccessToken(userId, { fetcher });
   const response = await fetcher(

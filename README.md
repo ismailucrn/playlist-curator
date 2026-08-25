@@ -87,6 +87,13 @@ Uygulama minimum yetki ilkesiyle şunları ister:
 
 MVP public playlist oluşturmaz; bu nedenle `playlist-modify-public` istemez.
 
+> **Playlist güvenlik garantisi:** Uygulamada playlist silme veya takibi bırakma
+> route'u yoktur. Spotify istemcisi `DELETE`, `PUT` ve `PATCH` metotlarını runtime'da
+> reddeder; `POST` isteklerini yalnızca yeni özel playlist oluşturma ve o playliste
+> öğe ekleme uçlarıyla sınırlar. Mevcut playlist'ler salt okunur ele alınır.
+> Spotify create-only bir scope sunmadığı için bu kısıt sunucu egress allowlist'i ve
+> otomatik testlerle uygulanır.
+
 ## Veritabanı
 
 Yerel geliştirme SQLite kullanır. Şema provider'a özel enum veya JSON kolonlarına bağımlı değildir ve PostgreSQL'e taşınabilir tutulmuştur.
@@ -167,6 +174,7 @@ Gerçek bir provider eklemek için:
 - Session cookie yalnızca rastgele token taşır; veritabanında SHA-256 hash'i tutulur.
 - Production cookie'leri `Secure` olur.
 - Mutasyon route'ları session, Zod ve same-origin doğrulaması yapar.
+- Spotify yazma istekleri sunucuda endpoint/method allowlist'inden geçer; mevcut playlist'lere yönelik silme, takip bırakma veya değiştirme çağrıları engellenir.
 - Spotify hataları token veya response gövdesini loglamadan uygulama hata tiplerine çevrilir.
 - Export işlemi idempotent request kimliği ve kısmi ilerleme kaydı kullanır.
 

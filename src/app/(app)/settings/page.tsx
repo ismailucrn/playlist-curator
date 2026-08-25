@@ -55,6 +55,16 @@ export default async function SettingsPage() {
                   : "Spotify ortam değişkenleri eklenmedi. Tüm demo özellikleri kullanılabilir."}
             </p>
           </div>
+          <div className="mt-3 rounded-2xl border border-emerald-300/15 bg-emerald-300/[.05] p-4">
+            <p className="text-xs font-semibold text-emerald-200">
+              Mevcut listeleriniz korunur
+            </p>
+            <p className="text-muted mt-1 text-xs leading-5">
+              Uygulama playlist silme, takibi bırakma veya mevcut listeyi
+              değiştirme isteği gönderemez. Yalnızca yeni özel liste oluşturup
+              seçtiğiniz parçaları o listeye ekleyebilir.
+            </p>
+          </div>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             {!connected ? (
               <Link

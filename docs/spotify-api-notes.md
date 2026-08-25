@@ -17,6 +17,14 @@ Bu belge 24 Ağustos 2026 tarihinde Spotify'ın resmi Web API dokümantasyonu ve
 
 Eski `GET/POST /playlists/{id}/tracks` ve `POST /users/{id}/playlists` uçları kullanılmaz. Şubat 2026 Development Mode değişikliklerinde `/tracks` uçları kaldırıldı; liste oluşturma mevcut kullanıcıya ait `/me/playlists` ucuna taşındı.
 
+## Mevcut playlist'leri koruma politikası
+
+- Uygulama mevcut playlist'leri yalnızca `GET` istekleriyle okur.
+- Spotify istemcisi `DELETE`, `PUT` ve `PATCH` metotlarını kabul etmez.
+- Yazma allowlist'i yalnız `POST /me/playlists` ve `POST /playlists/{id}/items` uçlarını içerir.
+- Playlist unfollow/silme ve mevcut playlist'i değiştirme route'u veya UI kontrolü bulunmaz.
+- OAuth'taki `playlist-modify-private` scope'u yeni özel playlist oluşturmak için gereklidir. Spotify daha dar bir create-only scope sunmadığından uygulama düzeyindeki egress allowlist'i testlerle zorunlu tutulur.
+
 ## Response shape kararları
 
 - Simplified playlist toplamı deprecated `tracks.total` yerine `items.total` alanından okunur.

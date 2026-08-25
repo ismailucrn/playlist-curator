@@ -68,6 +68,7 @@ Spotify 429 yanıtındaki `Retry-After` sayısı detay olarak korunur. 403, yeni
 - OAuth geçici cookie'si 10 dakika geçerlidir; state eşleşmesi ve expiry zorunludur.
 - Redirect hedefleri sabittir; kullanıcı kontrollü open redirect yoktur.
 - Unsafe route'larda session sahipliği, same-origin ve Zod doğrulaması birlikte uygulanır.
+- Spotify egress politikası yalnız `GET` ile okuma, `POST /me/playlists` ile yeni liste oluşturma ve `POST /playlists/{id}/items` ile öğe eklemeye izin verir. `DELETE`, `PUT`, `PATCH`, unfollow ve diğer yazma uçları token yüklenmeden önce engellenir.
 - Token encryption key ve session secret environment secret store içinde tutulmalıdır.
 - SQLite kişisel/tek process MVP içindir. Çok instance deployment'ta PostgreSQL, connection pooling ve account bazlı distributed refresh lock eklenmelidir.
 - Üretimde CSP, structured redacted logging, database backup encryption ve key rotation eklenmelidir.
